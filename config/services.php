@@ -35,4 +35,18 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Instagram Graph API
+    |--------------------------------------------------------------------------
+    |
+    | Long-lived access token (60-day expiry) generated via Meta for Developers.
+    | See app/Services/InstagramService.php for full setup instructions.
+    |
+    */
+    'instagram' => [
+        'access_token' => env('INSTAGRAM_ACCESS_TOKEN'),
+        'username' => env('INSTAGRAM_USERNAME', 'holtonmetal'),
+    ],
+
 ];
