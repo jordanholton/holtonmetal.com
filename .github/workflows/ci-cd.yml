@@ -54,7 +54,7 @@ jobs:
       - name: Tag on Merge for holtonmetal.com to Develop
         id: create_tag
         run: |
-          export GITHUB_TAG_holtonmetal_COM=$(date "+%Y.%m.%d.%H%M%S-develop")
+          export GITHUB_TAG_HOLTONMETAL_COM=$(date "+%Y.%m.%d.%H%M%S-develop")
           git config --global user.email "jordan@jordanholton.com"
           git config --global user.name "Jordan Holton"
           git tag $GITHUB_TAG_HOLTONMETAL_COM
@@ -78,7 +78,7 @@ jobs:
       - name: Tag on Merge for holtonmetal.com to Release
         id: create_tag
         run: |
-          export GITHUB_TAG_holtonmetal_COM=$(date "+%Y.%m.%d.%H%M%S-release")
+          export GITHUB_TAG_HOLTONMETAL_COM=$(date "+%Y.%m.%d.%H%M%S-release")
           git config --global user.email "jordan@jordanholton.com"
           git config --global user.name "Jordan Holton"
           git tag $GITHUB_TAG_HOLTONMETAL_COM
