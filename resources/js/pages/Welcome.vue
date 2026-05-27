@@ -20,6 +20,25 @@ const props = defineProps<{
 const currentYear = new Date().getFullYear();
 const mobileMenuOpen = ref(false);
 
+// About section two-panel carousel
+const aboutPanel = ref(0);
+const slideForward = ref(true);
+const aboutTransition = computed(() => (slideForward.value ? 'slide-left' : 'slide-right'));
+
+function goToPanel(index: number) {
+    if (index === aboutPanel.value) return;
+    slideForward.value = index > aboutPanel.value;
+    aboutPanel.value = index;
+}
+function nextAbout() {
+    slideForward.value = true;
+    aboutPanel.value = (aboutPanel.value + 1) % 2;
+}
+function prevAbout() {
+    slideForward.value = false;
+    aboutPanel.value = ((aboutPanel.value - 1) + 2) % 2;
+}
+
 const displayPosts = computed(() => props.instagramPosts?.slice(0, 12) ?? []);
 const hasInstagram = computed(() => displayPosts.value.length > 0);
 const instagramUrl = computed(() =>
@@ -35,7 +54,7 @@ function getPostImage(post: InstagramPost): string {
 </script>
 
 <template>
-    <Head title="Holton Metal LLC — Custom Blacksmithing & Metalwork">
+    <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
         <link
@@ -344,50 +363,162 @@ function getPostImage(post: InstagramPost): string {
             </div>
         </section>
 
-        <!-- ─── ABOUT ──────────────────────────────────────────────────── -->
+        <!-- ─── ABOUT (two-panel swipe carousel) ─────────────────────── -->
         <section id="about" class="bg-[#0a0a0a] px-6 py-24">
             <div class="mx-auto max-w-4xl">
-                <div class="grid gap-12 md:grid-cols-2 md:items-center">
-                    <!-- Text -->
-                    <div>
-                        <div class="mb-3 text-xs font-medium tracking-[0.5em] text-[#e07b39] uppercase">About</div>
-                        <h2
-                            class="mb-6 text-4xl font-bold uppercase md:text-5xl"
-                            style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em"
+
+                <!-- Shared section label -->
+                <div class="mb-10 text-center">
+                    <div class="mb-2 text-xs font-medium tracking-[0.5em] text-[#e07b39] uppercase">About</div>
+                    <!-- Tab pills -->
+                    <div class="inline-flex border border-[#2a2a2a] bg-[#141414]">
+                        <button
+                            class="px-6 py-2.5 text-xs tracking-[0.25em] uppercase transition-all duration-200"
+                            :class="aboutPanel === 0
+                                ? 'bg-[#e07b39] text-white'
+                                : 'text-[#a0a0a0] hover:text-[#f5f5f5]'"
+                            @click="goToPanel(0)"
                         >
                             The Craft
-                        </h2>
-                        <div class="mb-6 h-0.5 w-16 bg-[#e07b39]" />
-                        <p class="mb-4 leading-relaxed text-[#a0a0a0]">
-                            Holton Metal LLC is a custom blacksmithing and fabrication shop dedicated to
-                            the craft of hand-forged metalwork. Every gate, railing, tool, and decorative
-                            piece is made with care using traditional techniques passed down through generations.
-                        </p>
-                        <p class="leading-relaxed text-[#a0a0a0]">
-                            From architectural ironwork to one-of-a-kind custom commissions, we bring
-                            both function and beauty to every project that comes through our doors.
-                        </p>
-                    </div>
-
-                    <!-- Feature list -->
-                    <div class="flex flex-col gap-4">
-                        <div
-                            v-for="item in [
-                                { icon: '⚒️', title: 'Hand-Forged', desc: 'Every piece shaped at the anvil, never mass-produced.' },
-                                { icon: '🔥', title: 'Forge-Welded', desc: 'Traditional fire-welding and modern fabrication techniques.' },
-                                { icon: '📐', title: 'Custom Orders', desc: 'Designed and built to your exact specifications.' },
-                            ]"
-                            :key="item.title"
-                            class="flex items-start gap-4 border border-[#2a2a2a] bg-[#141414] p-5"
+                        </button>
+                        <button
+                            class="px-6 py-2.5 text-xs tracking-[0.25em] uppercase transition-all duration-200"
+                            :class="aboutPanel === 1
+                                ? 'bg-[#e07b39] text-white'
+                                : 'text-[#a0a0a0] hover:text-[#f5f5f5]'"
+                            @click="goToPanel(1)"
                         >
-                            <span class="text-2xl" aria-hidden="true">{{ item.icon }}</span>
-                            <div>
-                                <div class="mb-1 text-sm font-semibold tracking-wide text-[#f5f5f5]">{{ item.title }}</div>
-                                <div class="text-sm leading-relaxed text-[#a0a0a0]">{{ item.desc }}</div>
-                            </div>
-                        </div>
+                            The Artist
+                        </button>
                     </div>
                 </div>
+
+                <!-- Slide viewport -->
+                <div class="relative overflow-hidden">
+                    <Transition :name="aboutTransition" mode="out-in">
+
+                        <!-- Panel 0 — The Craft -->
+                        <div v-if="aboutPanel === 0" key="craft" class="grid gap-12 md:grid-cols-2 md:items-center">
+                            <div>
+                                <h2
+                                    class="mb-6 text-4xl font-bold uppercase md:text-5xl"
+                                    style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em"
+                                >
+                                    The Craft
+                                </h2>
+                                <div class="mb-6 h-0.5 w-16 bg-[#e07b39]" />
+                                <p class="mb-4 leading-relaxed text-[#a0a0a0]">
+                                    Holton Metal LLC is a custom blacksmithing and fabrication shop dedicated to
+                                    the craft of hand-forged metalwork. Every gate, railing, tool, and decorative
+                                    piece is made with care using traditional techniques passed down through generations.
+                                </p>
+                                <p class="leading-relaxed text-[#a0a0a0]">
+                                    From architectural ironwork to one-of-a-kind custom commissions, we bring
+                                    both function and beauty to every project that comes through our doors.
+                                </p>
+                            </div>
+                            <div class="flex flex-col gap-4">
+                                <div
+                                    v-for="item in [
+                                        { icon: '⚒️', title: 'Hand-Forged', desc: 'Every piece shaped at the anvil, never mass-produced.' },
+                                        { icon: '🔥', title: 'Forge-Welded', desc: 'Traditional fire-welding and modern fabrication techniques.' },
+                                        { icon: '📐', title: 'Custom Orders', desc: 'Designed and built to your exact specifications.' },
+                                    ]"
+                                    :key="item.title"
+                                    class="flex items-start gap-4 border border-[#2a2a2a] bg-[#141414] p-5"
+                                >
+                                    <span class="text-2xl" aria-hidden="true">{{ item.icon }}</span>
+                                    <div>
+                                        <div class="mb-1 text-sm font-semibold tracking-wide text-[#f5f5f5]">{{ item.title }}</div>
+                                        <div class="text-sm leading-relaxed text-[#a0a0a0]">{{ item.desc }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 1 — Meet Nathan Holton -->
+                        <div v-else key="nathan" class="grid gap-12 md:grid-cols-2 md:items-center">
+                            <div>
+                                <h2
+                                    class="mb-6 text-4xl font-bold uppercase md:text-5xl"
+                                    style="font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em"
+                                >
+                                    Nathan<br />Holton
+                                </h2>
+                                <div class="mb-6 h-0.5 w-16 bg-[#e07b39]" />
+                                <p class="mb-4 leading-relaxed text-[#a0a0a0]">
+                                    Nathan Holton is the founder and sole craftsman behind Holton Metal LLC.
+                                    With a lifelong passion for working with metal, Nathan built his skills through
+                                    years of hands-on forging — learning the language of iron and fire one heat at a time.
+                                </p>
+                                <p class="leading-relaxed text-[#a0a0a0]">
+                                    Every piece that leaves the shop carries Nathan's signature attention to detail,
+                                    rooted in a deep respect for the craft and a commitment to doing things right —
+                                    the old way, the hard way, the honest way.
+                                </p>
+                            </div>
+                            <div class="flex flex-col gap-4">
+                                <div
+                                    v-for="item in [
+                                        { icon: '🔨', title: 'Blacksmith & Fabricator', desc: 'Trained in traditional hand-forging with a full modern shop setup.' },
+                                        { icon: '🏔️', title: 'One-Man Operation', desc: 'Every order is personally handled by Nathan from design to delivery.' },
+                                        { icon: '✦', title: 'Signature Style', desc: 'Bold, functional ironwork with a raw, honest aesthetic.' },
+                                    ]"
+                                    :key="item.title"
+                                    class="flex items-start gap-4 border border-[#2a2a2a] bg-[#141414] p-5"
+                                >
+                                    <span class="text-2xl" aria-hidden="true">{{ item.icon }}</span>
+                                    <div>
+                                        <div class="mb-1 text-sm font-semibold tracking-wide text-[#f5f5f5]">{{ item.title }}</div>
+                                        <div class="text-sm leading-relaxed text-[#a0a0a0]">{{ item.desc }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </Transition>
+                </div>
+
+                <!-- Navigation row -->
+                <div class="mt-10 flex items-center justify-center gap-6">
+                    <!-- Prev -->
+                    <button
+                        class="flex h-10 w-10 items-center justify-center border border-[#2a2a2a] text-[#a0a0a0] transition-all duration-200 hover:border-[#e07b39] hover:text-[#e07b39]"
+                        aria-label="Previous panel"
+                        @click="prevAbout"
+                    >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Dots -->
+                    <div class="flex items-center gap-2.5">
+                        <button
+                            v-for="i in 2"
+                            :key="i"
+                            class="transition-all duration-300"
+                            :class="aboutPanel === i - 1
+                                ? 'h-2 w-6 bg-[#e07b39]'
+                                : 'h-2 w-2 bg-[#2a2a2a] hover:bg-[#a0a0a0]'"
+                            :aria-label="`Go to panel ${i}`"
+                            :aria-current="aboutPanel === i - 1 ? 'true' : undefined"
+                            @click="goToPanel(i - 1)"
+                        />
+                    </div>
+
+                    <!-- Next -->
+                    <button
+                        class="flex h-10 w-10 items-center justify-center border border-[#2a2a2a] text-[#a0a0a0] transition-all duration-200 hover:border-[#e07b39] hover:text-[#e07b39]"
+                        aria-label="Next panel"
+                        @click="nextAbout"
+                    >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+
             </div>
         </section>
 
@@ -455,3 +586,40 @@ function getPostImage(post: InstagramPost): string {
         </footer>
     </div>
 </template>
+
+<style scoped>
+/* ── About section swipe transitions ─────────────────────────────── */
+
+/* Slide LEFT — advancing forward (The Craft → The Artist) */
+.slide-left-enter-active,
+.slide-left-leave-active {
+    transition:
+        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        opacity 0.4s ease;
+}
+.slide-left-enter-from {
+    transform: translateX(60px);
+    opacity: 0;
+}
+.slide-left-leave-to {
+    transform: translateX(-60px);
+    opacity: 0;
+}
+
+/* Slide RIGHT — going back (The Artist → The Craft) */
+.slide-right-enter-active,
+.slide-right-leave-active {
+    transition:
+        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        opacity 0.4s ease;
+}
+.slide-right-enter-from {
+    transform: translateX(-60px);
+    opacity: 0;
+}
+.slide-right-leave-to {
+    transform: translateX(60px);
+    opacity: 0;
+}
+</style>
+
